@@ -7,17 +7,66 @@ import {
   Box,
   Alert,
   InputAdornment,
-  IconButton
+  IconButton,
+  Container,
+  Stack
 } from '@mui/material';
-import { Visibility, VisibilityOff, Security } from '@mui/icons-material';
+import { Visibility, VisibilityOff, Security, Block } from '@mui/icons-material';
 import { useAuth } from '../../hooks/useAuth.js';
 import { useSelector } from 'react-redux';
 import { selectAuth } from '../../store/slices/authSlice.js';
 import { USER_ROLES } from '../../constants/index.js';
+import { useNavigate } from 'react-router-dom';
 
 const AdminLogin = () => {
   const { login } = useAuth();
   const { loading, error } = useSelector(selectAuth);
+  const navigate = useNavigate();
+
+  // SECURITY LOCKDOWN: Check if admin access is disabled
+  const adminAccessEnabled = import.meta.env.VITE_ADMIN_ACCESS_ENABLED === 'true';
+  const adminLockdown = import.meta.env.VITE_ADMIN_LOCKDOWN === 'true';
+
+  // If admin access is disabled or in lockdown, show security message
+  if (!adminAccessEnabled || adminLockdown) {
+    return (
+      <Container maxWidth="sm" sx={{ mt: 8 }}>
+        <Paper elevation={3} sx={{ p: 4, textAlign: 'center', bgcolor: 'error.light', color: 'white' }}>
+          <Block sx={{ fontSize: 64, mb: 2, color: 'error.main' }} />
+          <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: 'error.main' }}>
+            🚨 ACCESS DENIED
+          </Typography>
+          <Typography variant="h6" gutterBottom sx={{ color: 'error.dark' }}>
+            SECURITY BREACH DETECTED
+          </Typography>
+          <Alert severity="error" sx={{ my: 3 }}>
+            Administrative access has been disabled due to security concerns.
+            All admin functionality is currently locked down.
+          </Alert>
+          <Stack spacing={2} sx={{ color: 'text.primary' }}>
+            <Typography variant="body1">
+              • All admin routes are blocked
+            </Typography>
+            <Typography variant="body1">
+              • Access keys have been revoked
+            </Typography>
+            <Typography variant="body1">
+              • Contact system administrator immediately
+            </Typography>
+          </Stack>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => navigate('/')}
+            sx={{ mt: 3, fontWeight: 'bold' }}
+          >
+            EXIT TO SAFE AREA
+          </Button>
+        </Paper>
+      </Container>
+    );
+  }
+
   const [credentials, setCredentials] = useState({
     email: '',
     password: '',
@@ -26,8 +75,8 @@ const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showAdminKey, setShowAdminKey] = useState(false);
 
-  // Admin access key - in a real app, this should be from environment variables
-  const ADMIN_ACCESS_KEY = 'ALGERIA_ADMIN_2025';
+  // SECURITY: Get admin access key from environment variables
+  const ADMIN_ACCESS_KEY = import.meta.env.VITE_ADMIN_ACCESS_KEY;
 
   const handleChange = (e) => {
     setCredentials({
@@ -38,10 +87,19 @@ const AdminLogin = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Validate admin access key
+
+    // Debug: Log the environment variable value
+    console.log('ADMIN_ACCESS_KEY from env:', ADMIN_ACCESS_KEY);
+    console.log('User entered key:', credentials.adminKey);
+
+    // Validate admin access key against environment variable
+    if (!ADMIN_ACCESS_KEY) {
+      alert('Admin access is disabled. Contact system administrator.');
+      return;
+    }
+
     if (credentials.adminKey !== ADMIN_ACCESS_KEY) {
-      alert('Invalid admin access key');
+      alert(`Invalid admin access key. Expected: ${ADMIN_ACCESS_KEY}, Got: ${credentials.adminKey}`);
       return;
     }
 
@@ -104,7 +162,7 @@ const AdminLogin = () => {
               onChange={handleChange}
               variant="outlined"
             />
-            
+
             <TextField
               margin="normal"
               required
@@ -164,8 +222,8 @@ const AdminLogin = () => {
               fullWidth
               variant="contained"
               color="error"
-              sx={{ 
-                mt: 3, 
+              sx={{
+                mt: 3,
                 mb: 2,
                 py: 1.5,
                 fontSize: '1.1rem',

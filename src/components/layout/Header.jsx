@@ -42,12 +42,12 @@ const Header = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
-  
+
   const user = useSelector(selectUser);
   const userRole = useSelector(selectUserRole);
   const darkMode = useSelector(selectDarkMode);
   const cartItemCount = useSelector(selectCartItemCount);
-  
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMenuAnchor, setMobileMenuAnchor] = React.useState(null);
 
@@ -103,21 +103,21 @@ const Header = () => {
   };
 
   return (
-    <AppBar 
-      position="fixed" 
+    <AppBar
+      position="fixed"
       elevation={0}
       sx={{
         zIndex: theme.zIndex.drawer + 1,
-        background: darkMode 
-          ? 'rgba(22, 27, 34, 0.95)' 
+        background: darkMode
+          ? 'rgba(22, 27, 34, 0.95)'
           : 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(20px)',
         borderBottom: `1px solid ${theme.palette.divider}`,
         color: theme.palette.text.primary
       }}
     >
-      <Toolbar 
-        sx={{ 
+      <Toolbar
+        sx={{
           px: { xs: 2, sm: 3, md: 4 },
           py: { xs: 1, sm: 1.5 },
           minHeight: { xs: 64, sm: 72 }
@@ -130,7 +130,7 @@ const Header = () => {
             aria-label="toggle sidebar"
             onClick={handleSidebarToggle}
             edge="start"
-            sx={{ 
+            sx={{
               mr: { xs: 2, sm: 3 },
               p: { xs: 1, sm: 1.5 },
               borderRadius: 1,
@@ -143,7 +143,7 @@ const Header = () => {
           >
             <MenuIcon />
           </IconButton>
-          
+
           {/* Logo and Brand */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Box
@@ -163,12 +163,12 @@ const Header = () => {
             >
               🇩🇿
             </Box>
-            
+
             <Box>
-              <Typography 
-                variant={isMobile ? 'h6' : 'h5'} 
-                component="div" 
-                sx={{ 
+              <Typography
+                variant={isMobile ? 'h6' : 'h5'}
+                component="div"
+                sx={{
                   fontWeight: 800,
                   background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
                   backgroundClip: 'text',
@@ -180,7 +180,7 @@ const Header = () => {
               >
                 Algeria Commerce
               </Typography>
-              
+
               {userRole && !isMobile && (
                 <Chip
                   icon={<span style={{ fontSize: '0.8rem' }}>{getRoleIcon(userRole)}</span>}
@@ -188,7 +188,7 @@ const Header = () => {
                   size="small"
                   color={getRoleColor(userRole)}
                   variant="outlined"
-                  sx={{ 
+                  sx={{
                     mt: 0.5,
                     fontWeight: 600,
                     fontSize: '0.75rem',
@@ -204,8 +204,8 @@ const Header = () => {
         <Stack direction="row" spacing={{ xs: 0.5, sm: 1 }} alignItems="center">
           {/* Search Button (Mobile) */}
           {isMobile && userRole === 'customer' && (
-            <IconButton 
-              color="inherit" 
+            <IconButton
+              color="inherit"
               size="medium"
               sx={{
                 borderRadius: 1,
@@ -219,8 +219,8 @@ const Header = () => {
           )}
 
           {/* Theme Toggle */}
-          <IconButton 
-            color="inherit" 
+          <IconButton
+            color="inherit"
             onClick={handleThemeToggle}
             size="medium"
             sx={{
@@ -239,7 +239,7 @@ const Header = () => {
           {userRole === 'customer' && (
             <>
               {!isMobile && (
-                <IconButton 
+                <IconButton
                   color="inherit"
                   size="medium"
                   sx={{
@@ -252,8 +252,8 @@ const Header = () => {
                   <FavoriteBorder />
                 </IconButton>
               )}
-              
-              <IconButton 
+
+              <IconButton
                 color="inherit"
                 size="medium"
                 onClick={handleCartClick}
@@ -264,8 +264,8 @@ const Header = () => {
                   }
                 }}
               >
-                <Badge 
-                  badgeContent={cartItemCount} 
+                <Badge
+                  badgeContent={cartItemCount}
                   color="error"
                   sx={{
                     '& .MuiBadge-badge': {
@@ -284,7 +284,7 @@ const Header = () => {
 
           {/* Notifications (Desktop) */}
           {!isMobile && (
-            <IconButton 
+            <IconButton
               color="inherit"
               size="medium"
               sx={{
@@ -294,8 +294,8 @@ const Header = () => {
                 }
               }}
             >
-              <Badge 
-                badgeContent={5} 
+              <Badge
+                badgeContent={5}
                 color="error"
                 sx={{
                   '& .MuiBadge-badge': {
@@ -333,7 +333,7 @@ const Header = () => {
             onClick={handleMenuOpen}
             aria-controls="user-menu"
             aria-haspopup="true"
-            sx={{ 
+            sx={{
               ml: { xs: 1, sm: 2 },
               p: 0.5,
               borderRadius: 1,
@@ -344,17 +344,17 @@ const Header = () => {
             }}
           >
             {user?.avatar ? (
-              <Avatar 
-                src={user.avatar} 
-                sx={{ 
-                  width: { xs: 36, sm: 40 }, 
+              <Avatar
+                src={user.avatar}
+                sx={{
+                  width: { xs: 36, sm: 40 },
                   height: { xs: 36, sm: 40 }
-                }} 
+                }}
               />
             ) : (
               <Avatar
-                sx={{ 
-                  width: { xs: 36, sm: 40 }, 
+                sx={{
+                  width: { xs: 36, sm: 40 },
                   height: { xs: 36, sm: 40 },
                   backgroundColor: theme.palette.primary.main,
                   color: theme.palette.primary.contrastText,
@@ -421,9 +421,9 @@ const Header = () => {
               🔔 Notifications
             </MenuItem>
           )}
-          <MenuItem 
+          <MenuItem
             onClick={handleLogout}
-            sx={{ 
+            sx={{
               color: 'error.main',
               '&:hover': {
                 backgroundColor: 'error.main',

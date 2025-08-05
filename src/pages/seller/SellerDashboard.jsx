@@ -6,17 +6,29 @@ import {
   CardContent,
   Box,
   Button,
-  Chip
+  Chip,
+  Stack,
+  Avatar,
+  Badge,
+  IconButton
 } from '@mui/material';
 import {
   TrendingUp,
   Inventory,
   ShoppingCart,
   AttachMoney,
-  Add
+  Add,
+  Notifications,
+  Settings,
+  Analytics,
+  List as ListIcon
 } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../constants/index.js';
 
 const SellerDashboard = () => {
+  const navigate = useNavigate();
+
   const stats = [
     {
       title: 'Total Revenue',
@@ -49,10 +61,33 @@ const SellerDashboard = () => {
   ];
 
   const recentOrders = [
-    { id: '#001', customer: 'Ahmed Benali', amount: 'DZD 2,500', status: 'Pending' },
-    { id: '#002', customer: 'Fatima Cherifi', amount: 'DZD 1,800', status: 'Shipped' },
-    { id: '#003', customer: 'Mohamed Slimani', amount: 'DZD 3,200', status: 'Delivered' },
+    {
+      id: '#001',
+      customer: 'Ahmed Benali',
+      amount: 'DZD 2,500',
+      status: 'Pending',
+      priority: 'high',
+      avatar: 'A'
+    },
+    {
+      id: '#002',
+      customer: 'Fatima Cherifi',
+      amount: 'DZD 1,800',
+      status: 'Shipped',
+      priority: 'medium',
+      avatar: 'F'
+    },
+    {
+      id: '#003',
+      customer: 'Mohamed Slimani',
+      amount: 'DZD 3,200',
+      status: 'Delivered',
+      priority: 'low',
+      avatar: 'M'
+    },
   ];
+
+  const pendingOrdersCount = recentOrders.filter(order => order.status === 'Pending').length;
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -74,13 +109,21 @@ const SellerDashboard = () => {
             Welcome back! Here's what's happening with your store.
           </Typography>
         </div>
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          size="large"
-        >
-          Add Product
-        </Button>
+        <Stack direction="row" spacing={2} alignItems="center">
+          <Badge badgeContent={pendingOrdersCount} color="error">
+            <IconButton onClick={() => navigate('/seller/notifications')}>
+              <Notifications />
+            </IconButton>
+          </Badge>
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            size="large"
+            onClick={() => navigate('/seller/products')}
+          >
+            Add Product
+          </Button>
+        </Stack>
       </Box>
 
       {/* Stats Cards */}
@@ -100,10 +143,10 @@ const SellerDashboard = () => {
                 <Typography variant="h4" component="div" sx={{ mb: 1 }}>
                   {stat.value}
                 </Typography>
-                <Typography 
-                  variant="body2" 
-                  sx={{ 
-                    color: stat.changeType === 'positive' ? 'success.main' : 'error.main' 
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: stat.changeType === 'positive' ? 'success.main' : 'error.main'
                   }}
                 >
                   {stat.change} from last month
@@ -136,28 +179,41 @@ const SellerDashboard = () => {
                       '&:last-child': { borderBottom: 'none' }
                     }}
                   >
-                    <Box>
-                      <Typography variant="subtitle2">
-                        Order {order.id}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {order.customer}
-                      </Typography>
-                    </Box>
+                    <Stack direction="row" spacing={2} alignItems="center">
+                      <Avatar sx={{ width: 40, height: 40 }}>
+                        {order.avatar}
+                      </Avatar>
+                      <Box>
+                        <Typography variant="subtitle2">
+                          Order {order.id}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {order.customer}
+                        </Typography>
+                      </Box>
+                    </Stack>
                     <Box sx={{ textAlign: 'right' }}>
                       <Typography variant="subtitle2">
                         {order.amount}
                       </Typography>
-                      <Chip
-                        label={order.status}
-                        color={getStatusColor(order.status)}
-                        size="small"
-                      />
+                      <Stack direction="row" spacing={1} justifyContent="flex-end">
+                        <Chip
+                          label={order.status}
+                          color={getStatusColor(order.status)}
+                          size="small"
+                        />
+                        <Chip
+                          label={order.priority}
+                          color={order.priority === 'high' ? 'error' : order.priority === 'medium' ? 'warning' : 'default'}
+                          size="small"
+                          variant="outlined"
+                        />
+                      </Stack>
                     </Box>
                   </Box>
                 ))}
               </Box>
-              <Button sx={{ mt: 2 }} fullWidth variant="outlined">
+              <Button sx={{ mt: 2 }} fullWidth variant="outlined" onClick={() => navigate('/seller/orders')}>
                 View All Orders
               </Button>
             </CardContent>
@@ -171,17 +227,45 @@ const SellerDashboard = () => {
                 Quick Actions
               </Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                <Button variant="outlined" fullWidth>
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  startIcon={<Add />}
+                  onClick={() => navigate('/seller/products')}
+                >
                   Add New Product
                 </Button>
-                <Button variant="outlined" fullWidth>
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  startIcon={<ListIcon />}
+                  onClick={() => navigate('/seller/products')}
+                >
+                  Manage Products
+                </Button>
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  startIcon={<ShoppingCart />}
+                  onClick={() => navigate('/seller/orders')}
+                >
+                  View Orders
+                </Button>
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  startIcon={<Analytics />}
+                  onClick={() => navigate('/seller/analytics')}
+                >
                   View Analytics
                 </Button>
-                <Button variant="outlined" fullWidth>
-                  Manage Inventory
-                </Button>
-                <Button variant="outlined" fullWidth>
-                  Customer Messages
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  startIcon={<Notifications />}
+                  onClick={() => navigate('/seller/notifications')}
+                >
+                  Notifications
                 </Button>
               </Box>
             </CardContent>

@@ -1,13 +1,14 @@
-import { 
-  Home, 
-  ShoppingCart, 
-  Store, 
-  Dashboard, 
-  People, 
+import {
+  Home,
+  ShoppingCart,
+  Store,
+  Dashboard,
+  People,
   Analytics,
   Campaign,
   Inventory,
-  Receipt
+  Receipt,
+  Notifications
 } from '@mui/icons-material';
 import { USER_ROLES, ROUTES } from './index.js';
 
@@ -25,7 +26,7 @@ export const NAVIGATION_ITEMS = {
       icon: Store
     }
   ],
-  
+
   [USER_ROLES.CUSTOMER]: [
     {
       label: 'Shop',
@@ -43,7 +44,7 @@ export const NAVIGATION_ITEMS = {
       icon: People
     }
   ],
-  
+
   [USER_ROLES.SELLER]: [
     {
       label: 'Dashboard',
@@ -61,12 +62,17 @@ export const NAVIGATION_ITEMS = {
       icon: Receipt
     },
     {
+      label: 'Notifications',
+      path: ROUTES.SELLER_NOTIFICATIONS,
+      icon: Notifications
+    },
+    {
       label: 'Analytics',
       path: ROUTES.SELLER_ANALYTICS,
       icon: Analytics
     }
   ],
-  
+
   [USER_ROLES.ADMIN]: [
     {
       label: 'Dashboard',

@@ -24,7 +24,13 @@ import Profile from './pages/customer/Profile.jsx';
 import Checkout from './pages/customer/Checkout.jsx';
 import OrderConfirmation from './pages/customer/OrderConfirmation.jsx';
 import SellerDashboard from './pages/seller/SellerDashboard.jsx';
+import SellerProducts from './pages/seller/SellerProducts.jsx';
+import SellerOrders from './pages/seller/SellerOrders.jsx';
+import SellerNotifications from './pages/seller/SellerNotifications.jsx';
 import AdminDashboard from './pages/admin/AdminDashboard.jsx';
+import AdminUsers from './pages/admin/AdminUsers.jsx';
+import AdminAnalytics from './pages/admin/AdminAnalytics.jsx';
+import SecurityLockdown from './components/security/SecurityLockdown.jsx';
 
 // Constants
 import { ROUTES, USER_ROLES } from './constants/index.js';
@@ -77,13 +83,18 @@ const AppRouter = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const userRole = useSelector(selectUserRole);
 
+  // SECURITY CHECK: Check if admin access is disabled
+  const adminLockdown = import.meta.env.VITE_ADMIN_LOCKDOWN === 'true';
+  const adminAccessEnabled = import.meta.env.VITE_ADMIN_ACCESS_ENABLED === 'true';
+
   // Redirect authenticated users to their dashboard
   const getDefaultRoute = () => {
     if (!isAuthenticated) return ROUTES.HOME;
-    
+
     switch (userRole) {
       case USER_ROLES.ADMIN:
-        return ROUTES.ADMIN_DASHBOARD;
+        // If admin access is disabled, redirect to lockdown page
+        return (!adminAccessEnabled || adminLockdown) ? '/security-lockdown' : ROUTES.ADMIN_DASHBOARD;
       case USER_ROLES.SELLER:
         return ROUTES.SELLER_DASHBOARD;
       case USER_ROLES.CUSTOMER:
@@ -99,29 +110,29 @@ const AppRouter = () => {
         <Routes>
           {/* Public Routes */}
           <Route path={ROUTES.HOME} element={<Home />} />
-          <Route 
-            path={ROUTES.LOGIN} 
+          <Route
+            path={ROUTES.LOGIN}
             element={
-              isAuthenticated ? 
-              <Navigate to={getDefaultRoute()} replace /> : 
-              <Login />
-            } 
+              isAuthenticated ?
+                <Navigate to={getDefaultRoute()} replace /> :
+                <Login />
+            }
           />
-          <Route 
-            path={ROUTES.REGISTER} 
+          <Route
+            path={ROUTES.REGISTER}
             element={
-              isAuthenticated ? 
-              <Navigate to={getDefaultRoute()} replace /> : 
-              <Register />
-            } 
+              isAuthenticated ?
+                <Navigate to={getDefaultRoute()} replace /> :
+                <Register />
+            }
           />
-          <Route 
-            path={ROUTES.ADMIN_LOGIN} 
+          <Route
+            path={ROUTES.ADMIN_LOGIN}
             element={
-              isAuthenticated ? 
-              <Navigate to={getDefaultRoute()} replace /> : 
-              <AdminLogin />
-            } 
+              isAuthenticated ?
+                <Navigate to={getDefaultRoute()} replace /> :
+                <AdminLogin />
+            }
           />
 
           {/* Public Shop Route - accessible to everyone */}
@@ -175,7 +186,7 @@ const AppRouter = () => {
             path={ROUTES.SELLER_PRODUCTS}
             element={
               <ProtectedRoute allowedRoles={[USER_ROLES.SELLER]}>
-                <div>Seller Products - Coming Soon</div>
+                <SellerProducts />
               </ProtectedRoute>
             }
           />
@@ -183,7 +194,15 @@ const AppRouter = () => {
             path={ROUTES.SELLER_ORDERS}
             element={
               <ProtectedRoute allowedRoles={[USER_ROLES.SELLER]}>
-                <div>Seller Orders - Coming Soon</div>
+                <SellerOrders />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={ROUTES.SELLER_NOTIFICATIONS}
+            element={
+              <ProtectedRoute allowedRoles={[USER_ROLES.SELLER]}>
+                <SellerNotifications />
               </ProtectedRoute>
             }
           />
@@ -196,12 +215,16 @@ const AppRouter = () => {
             }
           />
 
+          {/* Security Lockdown Route */}
+          <Route path="/security-lockdown" element={<SecurityLockdown />} />
+
           {/* Admin Routes */}
           <Route
             path={ROUTES.ADMIN_DASHBOARD}
             element={
               <ProtectedRoute requiredRole={USER_ROLES.ADMIN}>
-                <AdminDashboard />
+                {(!import.meta.env.VITE_ADMIN_ACCESS_ENABLED || import.meta.env.VITE_ADMIN_LOCKDOWN === 'true') ?
+                  <SecurityLockdown /> : <AdminDashboard />}
               </ProtectedRoute>
             }
           />
@@ -209,7 +232,17 @@ const AppRouter = () => {
             path={ROUTES.ADMIN_USERS}
             element={
               <ProtectedRoute requiredRole={USER_ROLES.ADMIN}>
-                <div>Admin Users - Coming Soon</div>
+                {(!import.meta.env.VITE_ADMIN_ACCESS_ENABLED || import.meta.env.VITE_ADMIN_LOCKDOWN === 'true') ?
+                  <SecurityLockdown /> : <AdminUsers />}
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={ROUTES.ADMIN_ANALYTICS}
+            element={
+              <ProtectedRoute requiredRole={USER_ROLES.ADMIN}>
+                {(!import.meta.env.VITE_ADMIN_ACCESS_ENABLED || import.meta.env.VITE_ADMIN_LOCKDOWN === 'true') ?
+                  <SecurityLockdown /> : <AdminAnalytics />}
               </ProtectedRoute>
             }
           />
