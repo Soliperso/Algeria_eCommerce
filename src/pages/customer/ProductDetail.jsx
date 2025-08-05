@@ -1,3 +1,4 @@
+// ProductDetail.jsx - Product detail page component
 import React, { useState, useEffect } from 'react';
 import {
     Box,
@@ -38,7 +39,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { addToCart, selectCartItemById } from '../../store/slices/cartSlice.js';
 import { selectIsAuthenticated } from '../../store/slices/authSlice.js';
-import { ROUTES } from '../../constants/index.js';
+import { ROUTES } from '../../constants/routes.js';
 
 // Mock product data with detailed information
 const mockProductDetails = {
@@ -552,4 +553,5 @@ const ProductDetail = () => {
     );
 };
 
+// Export the component as default
 export default ProductDetail;

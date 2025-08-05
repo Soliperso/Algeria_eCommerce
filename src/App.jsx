@@ -33,7 +33,8 @@ import AdminAnalytics from './pages/admin/AdminAnalytics.jsx';
 import SecurityLockdown from './components/security/SecurityLockdown.jsx';
 
 // Constants
-import { ROUTES, USER_ROLES } from './constants/index.js';
+import { ROUTES } from './constants/routes.js';
+import { USER_ROLES } from './constants/userRoles.js';
 
 // Selectors
 import { selectDarkMode, selectIsAuthenticated, selectUserRole } from './store/slices/index.js';
